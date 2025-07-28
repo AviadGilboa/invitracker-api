@@ -12,7 +12,9 @@ from . import schemas
 
 app = fastapi.FastAPI()
 
-models.Base.metadata.create_all(bind=session.engine)
+models.Base.metadata.create_all(
+    bind=session.engine
+)
 
 app.include_router(
     router=user.router
