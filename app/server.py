@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from .db import models, session
 
-from .api import user
+from .api import user, login
 from . import schemas
 
 
@@ -18,6 +18,9 @@ models.Base.metadata.create_all(
 
 app.include_router(
     router=user.router
+)
+app.include_router(
+    router=login.router
 )
 
 @app.get('/')
