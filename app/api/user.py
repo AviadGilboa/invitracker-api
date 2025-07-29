@@ -32,13 +32,12 @@ def create_user(
     new_user = models.User(
         **user.model_dump()
     )
-
-    db.add(
-        instance=new_user,
+    return crud_users.create_user(
+        db=db,
+        new_user=new_user
     )
-    db.commit()
-    db.refresh(new_user)
-    return new_user
+
+
 
 @router.get(
     path='/{id}',
