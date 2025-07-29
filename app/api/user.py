@@ -50,7 +50,6 @@ def get_user_by_id(
     db: Session=fastapi.Depends(get_db),
     current_user: schemas.UserDetails = fastapi.Depends(oauth2.get_current_user)
 ):
-    print(id)
     if current_user.id == id or current_user.role ==  models.UserRole.admin:
         user = crud_users.get_user_by_id(
             user_id=id,

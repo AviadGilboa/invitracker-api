@@ -3,7 +3,7 @@ import fastapi.dependencies
 import sqlalchemy
 import sqlalchemy.orm
 
-from ..db import models, session
+from ..db import models
 
 def get_user_by_id(
     user_id: int,
@@ -13,3 +13,16 @@ def get_user_by_id(
         entity=models.User,
         ident=user_id,
     )
+
+def find_user_by_email(
+    user_email: str,
+    db: sqlalchemy.orm.Session,
+):
+    stmt_find_user_by_email = sqlalchemy.select(
+        models.User,
+    ).where(
+        models.User.email == user_email,
+    )
+    return db.scalars(stmt_find_user_by_email).one_or_none()
+    
+    

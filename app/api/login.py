@@ -7,6 +7,7 @@ from .. import schemas
 from ..utils import hash, oauth2
 from ..db import models
 from ..db.session import get_db
+from ..crud import users as crud_users
 
 
 router = fastapi.APIRouter(
@@ -23,13 +24,10 @@ def login(
     user_credentials: schemas.UserLogin,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db)
 ):
-    stmt_find_user_by_email = sqlalchemy.select(
-        models.User,
-    ).where(
-        models.User.email == user_credentials.email,
+    user = crud_users.find_user_by_email(
+        user_email=user_credentials.email,
+        db=db,
     )
-    user = db.scalars(stmt_find_user_by_email).one_or_none()
-    
     if user is None:
         raise fastapi.HTTPException(
             status_code=fastapi.status.HTTP_403_FORBIDDEN,
