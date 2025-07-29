@@ -2,6 +2,7 @@ import pydantic
 
 from typing import Optional
 
+from .db.models import UserRole
 class UserCreate(
     pydantic.BaseModel,
 ):
@@ -10,7 +11,7 @@ class UserCreate(
     password: str
     phone_number: str
 
-    
+
 class UserOut(
     pydantic.BaseModel,
 ):
@@ -18,7 +19,11 @@ class UserOut(
     full_name: str
     email: pydantic.EmailStr
     phone_number: str    
-    
+
+class UserDetails(
+    UserOut
+):
+    role: UserRole
 class UserLogin(
     pydantic.BaseModel
 ):
@@ -35,4 +40,3 @@ class TokenData(
     pydantic.BaseModel
 ):
     id: Optional[int] = None
-    role: Optional[str] = None

@@ -1,9 +1,18 @@
+import enum
+import sqlalchemy
+
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 
 from .session import Base
+
+class UserRole(
+    enum.Enum
+):
+    client = 'client'
+    admin = 'admin'
 
 class User(Base):
     __tablename__ = 'users'
@@ -30,6 +39,11 @@ class User(Base):
         String,
         nullable=False,
         unique=True,
+    )
+    role = Column(
+        sqlalchemy.Enum(UserRole),
+        nullable=False,
+        default=UserRole.client,
     )
     created_at = Column(
         TIMESTAMP(timezone=True),

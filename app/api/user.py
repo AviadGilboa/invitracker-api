@@ -2,10 +2,13 @@ import fastapi
 
 from sqlalchemy.orm import Session
 
+
+
 from .. import schemas
 from ..utils import hash, oauth2
 from ..db import models
 from ..db.session import get_db
+from ..crud import users as crud_users
 
 router = fastapi.APIRouter(
     prefix='/users',
@@ -45,13 +48,15 @@ def create_user(
 def get_user_by_id(
     id: int,
     db: Session=fastapi.Depends(get_db),
-    current_user: schemas.TokenData = fastapi.Depends(oauth2.get_current_user)
+    current_user: schemas.UserDetails = fastapi.Depends(oauth2.get_current_user)
 ):
-    if current_user.role is 'admin' or current_user.id == id:
-        user = db.get(
-            entity=models.User,
-            ident=id,
+    print(id)
+    if current_user.id == id or current_user.role ==  models.UserRole.admin:
+        user = crud_users.get_user_by_id(
+            user_id=id,
+            db=db,
         )
+
         if not user:
             raise fastapi.HTTPException(
                 status_code=fastapi.status.HTTP_404_NOT_FOUND,

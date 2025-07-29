@@ -17,6 +17,7 @@ router = fastapi.APIRouter(
 @router.post(
     path='',
     status_code=fastapi.status.HTTP_200_OK,
+    response_model=schemas.Token,
 )
 def login(
     user_credentials: schemas.UserLogin,
@@ -48,11 +49,10 @@ def login(
     access_token = oauth2.create_access_token(
         token_data= {
             'user_id': user.id,
-            'role': 'client',
         }
     )
 
     return {
         'token_type': 'Bearer',
-        'token': access_token,
+        'access_token': access_token,
     }

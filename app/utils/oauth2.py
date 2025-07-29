@@ -7,10 +7,10 @@ import sqlalchemy.orm
 from datetime import datetime, timedelta, timezone
 
 from ..configuration.setting import settings
-from ..db import models
+from ..crud import users as crud_users
+from ..db import models, session
 from .. import schemas 
 
-from ..db.session import get_db
 
 SECRET_KEY = settings.secret_key
 ALGORITHM = settings.algorithm
@@ -49,12 +49,11 @@ def verify_access_token(
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id = payload.get('user_id')
-        user_role = payload.get('role')
+
         if user_id is None:
             raise credentials_exception
         token_data = schemas.TokenData(
             id=user_id,
-            role=user_role,
         )
     except jwt.exceptions.InvalidTokenError:
         raise credentials_exception
@@ -63,13 +62,21 @@ def verify_access_token(
 
 def get_current_user(
     token: str = fastapi.Depends(fastapi.security.OAuth2PasswordBearer(tokenUrl='login')),
+    db: sqlalchemy.orm.Session = fastapi.Depends(session.get_db),
 ):
+
     credentials_exception = fastapi.HTTPException(
         status_code=fastapi.status.HTTP_401_UNAUTHORIZED,
         detail=f'Could not validate credentials',
         headers={'WWW-Authenticate': 'Bearer'}
     )
-    return verify_access_token(
+    token_data = verify_access_token(
         token=token,
         credentials_exception=credentials_exception,
     )
+    return crud_users.get_user_by_id(
+        user_id=token_data.id,
+        db=db,
+    )
+    
+    
