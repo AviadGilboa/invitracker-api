@@ -5,6 +5,7 @@ import sqlalchemy.exc
 import sqlalchemy.orm
 
 from ..db import models
+from .. import schemas
 
 def get_user_by_id(
     user_id: int,
@@ -28,7 +29,7 @@ def find_user_by_email(
     
 def create_user(
     db: sqlalchemy.orm.Session,
-    new_user,
+    new_user: models.User,
 ):
     db.add(
         instance=new_user,

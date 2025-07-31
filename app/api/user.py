@@ -30,7 +30,7 @@ def create_user(
     user.password = new_user_hash_password
 
     new_user = models.User(
-        **user.model_dump()
+        **user.model_dump(),
     )
     return crud_users.create_user(
         db=db,
