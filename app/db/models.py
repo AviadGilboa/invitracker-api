@@ -1,7 +1,7 @@
 import enum
 import sqlalchemy
 
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import Column, DateTime, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
@@ -46,7 +46,78 @@ class User(Base):
         default=UserRole.client,
     )
     created_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text('now()'),
+    )
+    
+class Event(Base):
+    __tablename__ = 'events'
+    id = Column(
+        Integer,
+        primary_key=True,
+        nullable=False,
+    )
+    title = Column(
+        String,
+        nullable=False,
+        unique=False,
+    )
+    date = Column(
+        DateTime(timezone=False),
+        nullable=False,
+    )
+    location = Column(
+        String,
+        nullable=False,
+    )
+    photo_path = Column(
+        String,
+        nullable=True,
+    )
+    custom_message = Column(
+        String,
+        nullable=True,
+    )
+    created_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text('now()'),
+    )
+    updated_at = Column(
         TIMESTAMP(timezone=True),
+        nullable=True,
+    )
+    created_by = Column(
+        Integer,
+        ForeignKey('users.id'),
+        nullable=False,
+    )
+    updated_by = Column(
+        Integer,
+        ForeignKey('users.id'),
+        nullable=True,
+    )
+
+class Event_Owners(Base):
+    __tablename__ = 'event_owners'
+    id = Column(
+        Integer,
+        primary_key=True,
+        nullable=False,
+    )
+    event_id = Column(
+        Integer,
+        ForeignKey('events.id'),
+        nullable=False
+    )
+    user_id = Column(
+        Integer,
+        ForeignKey('users.id'),
+        nullable=False
+    )
+    added_at = Column(
+        DateTime(timezone=True),
         nullable=False,
         server_default=text('now()'),
     )

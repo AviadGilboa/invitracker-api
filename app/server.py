@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from .db import models, session
 
-from .api import user, login
+from .api import user, login, event
 from . import schemas
 
 
@@ -21,6 +21,9 @@ app.include_router(
 )
 app.include_router(
     router=login.router
+)
+app.include_router(
+    router=event.router
 )
 
 @app.get('/')
