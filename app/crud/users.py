@@ -10,7 +10,7 @@ from .. import schemas
 def get_user_by_id(
     user_id: int,
     db: sqlalchemy.orm.Session,
-):
+) -> models.User:
     return db.get(
         entity=models.User,
         ident=user_id,

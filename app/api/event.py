@@ -25,8 +25,9 @@ router = fastapi.APIRouter(
 )
 def get_all_user_events(
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
-    current_user: schemas.UserDetails = fastapi.Depends(oauth2.get_current_user)
+    current_user: models.User = fastapi.Depends(oauth2.get_current_user)
 ):
+    return current_user.events
     user_events: list[schemas.EventOut] = crud_events.get_all_event_by_user_id(
         db=db,
         user_id=current_user.id,

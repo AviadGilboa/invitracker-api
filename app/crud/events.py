@@ -54,7 +54,6 @@ def change_event_data(
         event_id=event_id,
     )
     current_event.updated_by = user_id
-    current_event.updated_at = sqlalchemy.func.now()
     
     update_data = event_update_details.model_dump(exclude_none=True).items()
     for key, value in update_data:
@@ -73,21 +72,3 @@ def change_event_data(
         )
     db.refresh(current_event)
     return current_event
-
-def get_all_event_by_user_id(
-    db: sqlalchemy.orm.Session,
-    user_id: int,
-):
-    user_event_ids: list[int] = crud_event_owners.get_all_event_id_by_user_id(
-        db=db,
-        user_id=user_id,
-    )
-    result: list[schemas.EventOut] = []
-    for event_id in user_event_ids:
-        result.append(
-            get_event_by_id(
-                db=db,
-                event_id=event_id
-            ),
-        )
-    return result
