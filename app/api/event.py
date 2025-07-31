@@ -94,15 +94,22 @@ def update_event(
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
     current_user: schemas.UserDetails = fastapi.Depends(oauth2.get_current_user)
 ):
-    
-    crud_events_owners.validate_event_owner(
-        db=db,
-        event_id=event_id,
-        user_id=current_user.id,
+    is_there_field_to_update = len(event_update_details.model_dump(exclude_none=True)) > 0
+    if is_there_field_to_update:
+        crud_events_owners.validate_event_owner(
+            db=db,
+            event_id=event_id,
+            user_id=current_user.id,
+        )
+        event_after_change = crud_events.change_event_data(
+            db=db,
+            event_id=event_id,
+            event_update_details=event_update_details,
+            user_id=current_user.id,
+        )
+        
+        return event_after_change
+    raise fastapi.HTTPException(
+        status_code=fastapi.status.HTTP_400_BAD_REQUEST,
+        detail=f'No data To Update'
     )
-    event_after_change = crud_events.change_event_data(
-        db=db,
-        event_id=event_id,
-        event_update_details=event_update_details,
-    )
-    return event_after_change

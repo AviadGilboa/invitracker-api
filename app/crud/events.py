@@ -46,13 +46,18 @@ def get_event_by_id(
 def change_event_data(
     db: sqlalchemy.orm.Session,
     event_update_details: schemas.EventUpdate,
-    event_id: int
+    event_id: int,
+    user_id: int
 ):
     current_event = get_event_by_id(
         db=db,
         event_id=event_id,
     )
-    for key, value in event_update_details.model_dump(exclude_none=True).items():
+    current_event.updated_by = user_id
+    current_event.updated_at = sqlalchemy.func.now()
+    
+    update_data = event_update_details.model_dump(exclude_none=True).items()
+    for key, value in update_data:
         setattr(
             current_event,
             key,
